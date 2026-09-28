@@ -14,6 +14,7 @@
     "scrape:test": "node --disable-warning=ExperimentalWarning scripts/test-scrape.js",
     "mock:comfy": "node scripts/mock-comfy.js",
     "mock:fal": "node scripts/mock-fal.js",
-    "mock:runninghub": "node scripts/mock-runninghub.js"
+    "mock:runninghub": "node scripts/mock-runninghub.js",
+    "start:hosted": "node --disable-warning=ExperimentalWarning scripts/start-hosted.js"
   }
 }

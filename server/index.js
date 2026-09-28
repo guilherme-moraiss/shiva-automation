@@ -1,4 +1,5 @@
 import http from 'node:http';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { db, now, getSettings, setSetting, getGroups, SECRET_KEYS, ROOT, MEDIA_DIR } from './db.js';
@@ -28,6 +29,16 @@ import { registerTeamRoutes, workerOf, beforeAction, afterAction } from './team.
 const DEMO = process.env.SHIVA_DEMO === '1';
 
 const PORT = Number(process.env.PORT) || 4747;
+/** On a public host, APP_PASSWORD puts the whole app behind the browser's login box (any user name, this password). */
+const PASSWORD = process.env.APP_PASSWORD || '';
+const digest = (s) => crypto.createHash('sha256').update(String(s)).digest();
+function authorized(req) {
+  if (!PASSWORD) return true;
+  const m = String(req.headers.authorization || '').match(/^Basic\s+(.+)$/i);
+  if (!m) return false;
+  const pass = Buffer.from(m[1], 'base64').toString('utf8').split(':').slice(1).join(':');
+  return crypto.timingSafeEqual(digest(pass), digest(PASSWORD));
+}
 const HOST = process.env.HOST || '127.0.0.1';
 const PUBLIC_DIR = path.join(ROOT, 'public');
 
@@ -374,6 +385,11 @@ const handler = async (req, res) => {
       p = decodeURIComponent(url.pathname);
     } catch {
       throw new HttpError(400, 'Invalid request');
+    }
+    if (p === '/healthz') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('ok'); } // the host's health check
+    if (!authorized(req)) {
+      res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="SHIVA Automation", charset="UTF-8"', 'Content-Type': 'text/plain' });
+      return res.end('Password required');
     }
     if (p.startsWith('/api/')) {
       if (DEMO && !['GET', 'HEAD'].includes(req.method)) return json(res, 403, { error: 'Read-only demo: nothing can be changed or generated here. Run the app locally to use it.' });
