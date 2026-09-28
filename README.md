@@ -33,6 +33,19 @@ would work. Suitable hosts:
 - a service with a persistent disk, such as Railway, Render or Fly.io. Mount `data/` on the persistent volume, and set
   `PORT` if the host requires it.
 
+### Deploy on Railway
+
+`railway.json` builds with `npm run setup` (yt-dlp + ffmpeg for Linux) and starts the app with `npm run start:hosted`.
+
+1. On railway.com: **New Project → Deploy from GitHub repo →** this repository.
+2. Add a **Volume** to the service, mounted at `/data`, so the data survives redeploys. On the first boot the shipped
+   `data/` folder is copied there.
+3. Set the service **Variables**:
+   - `APP_PASSWORD`: required. The whole app sits behind the browser's login box (any user name, this password), and
+     the app refuses to start without it.
+   - `RADAR_DATA_DIR=/data`
+4. **Settings → Networking → Generate Domain**, then open the link and log in.
+
 ## Providers
 
 | What | Provider | Configure in |
