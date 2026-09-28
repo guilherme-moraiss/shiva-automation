@@ -1,0 +1,10 @@
+node_modules/
+# The owner's choice (28/09): everything is committed, including data/ (the database with the saved API keys,
+# downloaded reels and generated media) and bin/ (ffmpeg, yt-dlp). The database is checkpointed before each commit,
+# so its side files are not needed.
+*.db-wal
+*.db-shm
+*.log
+.vercel/
+.DS_Store
+Thumbs.db

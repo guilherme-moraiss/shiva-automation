@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SHIVA Automation</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23070a1a'/><text x='16' y='22.5' font-size='18' font-family='Arial' font-weight='900' fill='%233d6bff' text-anchor='middle'>S</text></svg>" />
+  <!-- Inter and JetBrains Mono load without blocking the first paint: on a slow or offline network the app renders at once with the system fonts. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" /></noscript>
+  <link rel="stylesheet" href="/styles.css" />
+  <!-- Fetch the whole module graph in parallel instead of discovering it after app.js is parsed. -->
+  <link rel="modulepreload" href="/icons.js" />
+  <link rel="modulepreload" href="/pipeline.js" />
+  <link rel="modulepreload" href="/studio.js" />
+  <link rel="modulepreload" href="/spicy.js" />
+  <style>
+    /* Shown while a page loads; fades in only if loading takes longer than 200 ms, so fast pages never flash. */
+    .page-loading { display: grid; place-items: center; min-height: 40vh; animation: fade-in 0.2s ease 0.2s both; }
+    /* Lazy, downscaled cover images on reel cards and remake rows. */
+    .thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .remake-row .rt { position: relative; overflow: hidden; display: block; }
+    .nav-label .link-btn [data-icon] { display: inline-flex; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="#/projects" aria-label="SHIVA Automation"><span class="brand-word">SHIVA</span><span class="brand-sub">Automation</span></a>
+      <div class="whoami" id="whoami" hidden></div>
+
+      <nav class="nav">
+        <a href="#/projects" data-view="projects"><span class="ico" data-icon="layers"></span>Projects <span class="count" id="nav-projects" title="Projects that need you"></span></a>
+      </nav>
+      <div class="nav-label">Radar</div>
+      <nav class="nav">
+        <a href="#/reels" data-view="reels"><span class="ico" data-icon="play"></span>Reels</a>
+        <a href="#/discover" data-view="discover"><span class="ico" data-icon="radar"></span>Discover</a>
+        <a href="#/review" data-view="review"><span class="ico" data-icon="eye"></span>Review <span class="count" id="nav-review"></span></a>
+        <a href="#/creators" data-view="creators"><span class="ico" data-icon="users"></span>Creators</a>
+        <a href="#/library" data-view="library"><span class="ico" data-icon="library"></span>Library</a>
+        <a href="#/remakes" data-view="remakes"><span class="ico" data-icon="list"></span>Remake queue <span class="count" id="nav-remakes"></span></a>
+        <a href="#/launch" data-view="launch"><span class="ico" data-icon="link"></span>Launch links</a>
+      </nav>
+      <div class="nav-label">Generation</div>
+      <nav class="nav">
+        <a href="#/create" data-view="create"><span class="ico" data-icon="pen-tool"></span>Create content</a>
+        <a href="#/carousels" data-view="carousels"><span class="ico" data-icon="images"></span>Carousels</a>
+        <a href="#/spicy" data-view="spicy"><span class="ico" data-icon="shield"></span>18+ content</a>
+        <a href="#/models" data-view="models"><span class="ico" data-icon="user"></span>Models</a>
+        <a href="#/faces" data-view="faces"><span class="ico" data-icon="user-plus"></span>Face generator</a>
+        <a href="#/setup" data-view="setup"><span class="ico" data-icon="settings"></span>Settings</a>
+      </nav>
+      <div class="nav-label">Publishing</div>
+      <nav class="nav">
+        <a href="#/approval" data-view="approval"><span class="ico" data-icon="check-circle"></span>Approval <span class="count" id="nav-approval" title="Videos waiting for approval"></span></a>
+        <a href="#/scheduled" data-view="scheduled"><span class="ico" data-icon="list"></span>Scheduled</a>
+        <a href="#/calendar" data-view="calendar"><span class="ico" data-icon="clock"></span>Calendar <span class="count" id="nav-due" title="Posts due to go out"></span></a>
+        <a href="#/profiles" data-view="profiles"><span class="ico" data-icon="user-check"></span>Profiles</a>
+      </nav>
+      <div class="nav-label">Management</div>
+      <nav class="nav">
+        <a href="#/usage" data-view="usage"><span class="ico" data-icon="dollar"></span>Costs</a>
+        <a href="#/team" data-view="team"><span class="ico" data-icon="briefcase"></span>Team</a>
+      </nav>
+
+      <div class="nav-label">Coming soon</div>
+      <nav class="nav nav-soon">
+        <span><span class="ico" data-icon="trending-up"></span>Trends</span>
+        <span><span class="ico" data-icon="music"></span>Audio</span>
+        <span><span class="ico" data-icon="smartphone"></span>Publishing (phone farm)</span>
+      </nav>
+
+      <div class="nav-label">Your models <button class="link-btn" id="add-model-btn" title="New model" aria-label="New model"><span data-icon="plus"></span>New</button></div>
+      <div class="models" id="model-list"></div>
+
+      <div class="sidebar-foot">Data stored locally in <code>data/</code>. Connections in Settings.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><h1 id="page-title">Projects</h1><div class="tb-status" id="tb-status" aria-label="Balances and today's spend"></div><div id="topbar-actions"></div></header>
+      <section id="view" class="view"></section>
+    </main>
+  </div>
+
+  <div id="job" class="job hidden"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modal" class="modal hidden"></div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

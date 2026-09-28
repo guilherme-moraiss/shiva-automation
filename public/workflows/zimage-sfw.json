@@ -1,0 +1,1798 @@
+{
+  "id": "934e3646-a83f-4c28-9e9f-9bb326bd488f",
+  "revision": 0,
+  "last_node_id": 90,
+  "last_link_id": 42,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        0,
+        0
+      ],
+      "size": [
+        320,
+        420
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            1,
+            4
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "post.jpg",
+        "image"
+      ],
+      "title": "Foto do post (entrada)"
+    },
+    {
+      "id": 2,
+      "type": "ImageScaleToTotalPixels",
+      "pos": [
+        0,
+        480
+      ],
+      "size": [
+        320,
+        110
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            2,
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScaleToTotalPixels"
+      },
+      "widgets_values": [
+        "nearest-exact",
+        1,
+        1
+      ],
+      "title": "Normalizar tamanho (1 MP)"
+    },
+    {
+      "id": 3,
+      "type": "GetImageSize",
+      "pos": [
+        0,
+        640
+      ],
+      "size": [
+        320,
+        90
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "width",
+          "type": "INT",
+          "links": [
+            18
+          ]
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": [
+            19
+          ]
+        },
+        {
+          "name": "batch_size",
+          "type": "INT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageSize"
+      },
+      "widgets_values": [],
+      "title": "Tamanho"
+    },
+    {
+      "id": 10,
+      "type": "UNETLoader",
+      "pos": [
+        420,
+        0
+      ],
+      "size": [
+        380,
+        90
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "z_image_turbo_bf16.safetensors",
+        "default"
+      ],
+      "title": "Z-Image Turbo"
+    },
+    {
+      "id": 11,
+      "type": "CLIPLoader",
+      "pos": [
+        420,
+        130
+      ],
+      "size": [
+        380,
+        110
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            10,
+            31,
+            35
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwen_3_4b.safetensors",
+        "lumina2",
+        "default"
+      ],
+      "title": "Text encoder (Qwen 3 4B)"
+    },
+    {
+      "id": 12,
+      "type": "VAELoader",
+      "pos": [
+        420,
+        280
+      ],
+      "size": [
+        380,
+        60
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            16,
+            30,
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "ae.safetensors"
+      ]
+    },
+    {
+      "id": 13,
+      "type": "ModelPatchLoader",
+      "pos": [
+        420,
+        380
+      ],
+      "size": [
+        380,
+        60
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL_PATCH",
+          "type": "MODEL_PATCH",
+          "links": [
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ModelPatchLoader"
+      },
+      "widgets_values": [
+        "Z-Image-Turbo-Fun-Controlnet-Union-2.1.safetensors"
+      ],
+      "title": "ControlNet Union"
+    },
+    {
+      "id": 14,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        420,
+        480
+      ],
+      "size": [
+        380,
+        90
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            13,
+            34
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly"
+      },
+      "widgets_values": [
+        "lila_000003000.safetensors",
+        1.0
+      ],
+      "title": "LoRA da tua modelo"
+    },
+    {
+      "id": 20,
+      "type": "AILab_QwenVL_Advanced",
+      "pos": [
+        860,
+        0
+      ],
+      "size": [
+        420,
+        420
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AILab_QwenVL_Advanced"
+      },
+      "widgets_values": [
+        "Qwen3-VL-4B-Instruct",
+        "None (FP16)",
+        "auto",
+        false,
+        "auto",
+        "🖼️ Detailed Description",
+        "Describe this photo as a single English prompt for an image generator, in plain prose (max 120 words): the woman's pose and body position, hand placement, facial expression, camera angle and framing, her outfit exactly as worn (garments, colours, fabric), the setting and background, lighting and colours, and the phone-photo look. Do not describe her face identity, hair colour, age or body measurements. No lists, no preamble.",
+        512,
+        0.6,
+        0.9,
+        1,
+        1.2,
+        16,
+        true,
+        951639124055623,
+        "randomize"
+      ],
+      "title": "Descrição automática da foto (Qwen-VL)"
+    },
+    {
+      "id": 21,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        860,
+        460
+      ],
+      "size": [
+        420,
+        150
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveStringMultiline"
+      },
+      "widgets_values": [
+        "Ara4g, a young woman, fully clothed, SFW, wearing the same outfit as in the original photo"
+      ],
+      "title": "Trigger da LoRA + indicações"
+    },
+    {
+      "id": 22,
+      "type": "StringConcatenate",
+      "pos": [
+        860,
+        650
+      ],
+      "size": [
+        420,
+        130
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 5
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            7,
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ", "
+      ],
+      "title": "Prompt final"
+    },
+    {
+      "id": 23,
+      "type": "PreviewAny",
+      "pos": [
+        860,
+        820
+      ],
+      "size": [
+        420,
+        180
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "title": "Ver prompt final"
+    },
+    {
+      "id": 30,
+      "type": "AIO_Preprocessor",
+      "pos": [
+        1340,
+        0
+      ],
+      "size": [
+        320,
+        90
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            9,
+            17
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AIO_Preprocessor"
+      },
+      "widgets_values": [
+        "PyraCannyPreprocessor",
+        1024
+      ],
+      "title": "Contornos (Canny)"
+    },
+    {
+      "id": 31,
+      "type": "PreviewImage",
+      "pos": [
+        1340,
+        130
+      ],
+      "size": [
+        320,
+        380
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "title": "Ver contornos"
+    },
+    {
+      "id": 40,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1720,
+        0
+      ],
+      "size": [
+        340,
+        110
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 10
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            12,
+            21,
+            24
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "title": "Prompt positivo"
+    },
+    {
+      "id": 41,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        1720,
+        150
+      ],
+      "size": [
+        340,
+        50
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            22,
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningZeroOut"
+      },
+      "widgets_values": [],
+      "title": "Negativo (vazio, cfg 1)"
+    },
+    {
+      "id": 42,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [
+        1720,
+        240
+      ],
+      "size": [
+        340,
+        80
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ModelSamplingAuraFlow"
+      },
+      "widgets_values": [
+        3,
+        "flow"
+      ]
+    },
+    {
+      "id": 43,
+      "type": "ZImageFunControlnet",
+      "pos": [
+        1720,
+        360
+      ],
+      "size": [
+        340,
+        140
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 14
+        },
+        {
+          "name": "model_patch",
+          "type": "MODEL_PATCH",
+          "link": 15
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 16
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 17
+        },
+        {
+          "name": "inpaint_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            20,
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ZImageFunControlnet"
+      },
+      "widgets_values": [
+        1.0
+      ],
+      "title": "Z-Image ControlNet (força)"
+    },
+    {
+      "id": 44,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        1720,
+        540
+      ],
+      "size": [
+        340,
+        110
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": 18
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptySD3LatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ],
+      "title": "Tela (tamanho do post)"
+    },
+    {
+      "id": 50,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        2120,
+        0
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 20
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 21
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 22
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            27
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced"
+      },
+      "widgets_values": [
+        "enable",
+        99385710393736,
+        "randomize",
+        12,
+        1,
+        "res_6s",
+        "ddim_uniform",
+        0,
+        4,
+        "disable"
+      ],
+      "title": "Passo 1"
+    },
+    {
+      "id": 51,
+      "type": "LatentUpscaleBy",
+      "pos": [
+        2120,
+        370
+      ],
+      "size": [
+        340,
+        80
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 27
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            28
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentUpscaleBy"
+      },
+      "widgets_values": [
+        "nearest-exact",
+        1.5
+      ],
+      "title": "Upscale ×1.5"
+    },
+    {
+      "id": 52,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        2120,
+        490
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 23
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 24
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 25
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            29
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced"
+      },
+      "widgets_values": [
+        "enable",
+        94452335224043,
+        "randomize",
+        12,
+        1,
+        "euler",
+        "ddim_uniform",
+        4,
+        1000,
+        "disable"
+      ],
+      "title": "Passo 2 (detalhe)"
+    },
+    {
+      "id": 53,
+      "type": "VAEDecode",
+      "pos": [
+        2120,
+        860
+      ],
+      "size": [
+        340,
+        50
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 29
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            33,
+            42
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 60,
+      "type": "UltralyticsDetectorProvider",
+      "pos": [
+        2520,
+        0
+      ],
+      "size": [
+        320,
+        80
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "BBOX_DETECTOR",
+          "type": "BBOX_DETECTOR",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "SEGM_DETECTOR",
+          "type": "SEGM_DETECTOR",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UltralyticsDetectorProvider"
+      },
+      "widgets_values": [
+        "bbox/face_yolov8m.pt"
+      ]
+    },
+    {
+      "id": 61,
+      "type": "SAMLoader",
+      "pos": [
+        2520,
+        120
+      ],
+      "size": [
+        320,
+        90
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAM_MODEL",
+          "type": "SAM_MODEL",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SAMLoader"
+      },
+      "widgets_values": [
+        "sam_vit_b_01ec64.pth",
+        "Prefer GPU"
+      ]
+    },
+    {
+      "id": 62,
+      "type": "CLIPTextEncode",
+      "pos": [
+        2520,
+        250
+      ],
+      "size": [
+        320,
+        110
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            32,
+            37
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "Ara4g, detailed natural face, realistic skin"
+      ],
+      "title": "Prompt da cara (trigger)"
+    },
+    {
+      "id": 63,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        2520,
+        400
+      ],
+      "size": [
+        320,
+        50
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 32
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            38
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningZeroOut"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 64,
+      "type": "FaceDetailer",
+      "pos": [
+        2880,
+        0
+      ],
+      "size": [
+        360,
+        760
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 33
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 34
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 35
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 36
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 37
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 38
+        },
+        {
+          "name": "bbox_detector",
+          "type": "BBOX_DETECTOR",
+          "link": 39
+        },
+        {
+          "name": "sam_model_opt",
+          "type": "SAM_MODEL",
+          "link": 40
+        },
+        {
+          "name": "segm_detector_opt",
+          "type": "SEGM_DETECTOR",
+          "link": null
+        },
+        {
+          "name": "detailer_hook",
+          "type": "DETAILER_HOOK",
+          "link": null
+        },
+        {
+          "name": "scheduler_func_opt",
+          "type": "SCHEDULER_FUNC",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            41
+          ]
+        },
+        {
+          "name": "cropped_refined",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "cropped_enhanced_alpha",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": []
+        },
+        {
+          "name": "detailer_pipe",
+          "type": "DETAILER_PIPE",
+          "links": []
+        },
+        {
+          "name": "cnet_images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FaceDetailer"
+      },
+      "widgets_values": [
+        512,
+        true,
+        1024,
+        401238235428482,
+        "randomize",
+        20,
+        2,
+        "res_2s",
+        "normal",
+        0.1,
+        5,
+        true,
+        true,
+        0.39,
+        10,
+        3,
+        "center-1",
+        0,
+        0.93,
+        0,
+        0.7,
+        "False",
+        10,
+        "",
+        1,
+        false,
+        20,
+        false,
+        false
+      ],
+      "title": "Face detailer (LoRA)"
+    },
+    {
+      "id": 65,
+      "type": "SaveImage",
+      "pos": [
+        3280,
+        0
+      ],
+      "size": [
+        380,
+        460
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 41
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "reels-radar/zimage_sfw"
+      ],
+      "title": "Guardar resultado"
+    },
+    {
+      "id": 66,
+      "type": "PreviewImage",
+      "pos": [
+        3280,
+        500
+      ],
+      "size": [
+        380,
+        380
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 42
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "title": "Antes do face detailer"
+    },
+    {
+      "id": 90,
+      "type": "MarkdownNote",
+      "pos": [
+        0,
+        -520
+      ],
+      "size": [
+        900,
+        440
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## Z-Image SFW — remake de foto com a LoRA da tua modelo\n\n1. **Foto do post:** carrega a foto do post que queres recriar.\n2. **LoRA:** escolhe a LoRA da tua modelo. Tem de estar carregada no Comfy Cloud (Models → Import).\n3. **Trigger:** põe a trigger word da LoRA no início (ex.: `Ara4g`) e também no *Prompt da cara*.\n4. Carrega em **Run**. A pose, o enquadramento e a composição vêm do post (ControlNet); a descrição da cena é automática (Qwen-VL).\n\nConteúdo SFW para Instagram: o prompt fixa “fully clothed, same outfit as the original”.\n\nAjustes: força do ControlNet (nó *Z-Image ControlNet*): 0.6–1.0; menos = mais liberdade à LoRA."
+      ],
+      "title": "Como usar"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      3,
+      10,
+      0,
+      14,
+      0,
+      "MODEL"
+    ],
+    [
+      4,
+      1,
+      0,
+      20,
+      0,
+      "IMAGE"
+    ],
+    [
+      5,
+      21,
+      0,
+      22,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      20,
+      0,
+      22,
+      1,
+      "STRING"
+    ],
+    [
+      7,
+      22,
+      0,
+      23,
+      0,
+      "STRING"
+    ],
+    [
+      8,
+      2,
+      0,
+      30,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      30,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      10,
+      11,
+      0,
+      40,
+      0,
+      "CLIP"
+    ],
+    [
+      11,
+      22,
+      0,
+      40,
+      1,
+      "STRING"
+    ],
+    [
+      12,
+      40,
+      0,
+      41,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      13,
+      14,
+      0,
+      42,
+      0,
+      "MODEL"
+    ],
+    [
+      14,
+      42,
+      0,
+      43,
+      0,
+      "MODEL"
+    ],
+    [
+      15,
+      13,
+      0,
+      43,
+      1,
+      "MODEL_PATCH"
+    ],
+    [
+      16,
+      12,
+      0,
+      43,
+      2,
+      "VAE"
+    ],
+    [
+      17,
+      30,
+      0,
+      43,
+      3,
+      "IMAGE"
+    ],
+    [
+      18,
+      3,
+      0,
+      44,
+      0,
+      "INT"
+    ],
+    [
+      19,
+      3,
+      1,
+      44,
+      1,
+      "INT"
+    ],
+    [
+      20,
+      43,
+      0,
+      50,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      40,
+      0,
+      50,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      22,
+      41,
+      0,
+      50,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      23,
+      43,
+      0,
+      52,
+      0,
+      "MODEL"
+    ],
+    [
+      24,
+      40,
+      0,
+      52,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      25,
+      41,
+      0,
+      52,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      26,
+      44,
+      0,
+      50,
+      3,
+      "LATENT"
+    ],
+    [
+      27,
+      50,
+      0,
+      51,
+      0,
+      "LATENT"
+    ],
+    [
+      28,
+      51,
+      0,
+      52,
+      3,
+      "LATENT"
+    ],
+    [
+      29,
+      52,
+      0,
+      53,
+      0,
+      "LATENT"
+    ],
+    [
+      30,
+      12,
+      0,
+      53,
+      1,
+      "VAE"
+    ],
+    [
+      31,
+      11,
+      0,
+      62,
+      0,
+      "CLIP"
+    ],
+    [
+      32,
+      62,
+      0,
+      63,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      33,
+      53,
+      0,
+      64,
+      0,
+      "IMAGE"
+    ],
+    [
+      34,
+      14,
+      0,
+      64,
+      1,
+      "MODEL"
+    ],
+    [
+      35,
+      11,
+      0,
+      64,
+      2,
+      "CLIP"
+    ],
+    [
+      36,
+      12,
+      0,
+      64,
+      3,
+      "VAE"
+    ],
+    [
+      37,
+      62,
+      0,
+      64,
+      4,
+      "CONDITIONING"
+    ],
+    [
+      38,
+      63,
+      0,
+      64,
+      5,
+      "CONDITIONING"
+    ],
+    [
+      39,
+      60,
+      0,
+      64,
+      6,
+      "BBOX_DETECTOR"
+    ],
+    [
+      40,
+      61,
+      0,
+      64,
+      7,
+      "SAM_MODEL"
+    ],
+    [
+      41,
+      64,
+      0,
+      65,
+      0,
+      "IMAGE"
+    ],
+    [
+      42,
+      53,
+      0,
+      66,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "1 · Foto de entrada",
+      "bounding": [
+        -20,
+        -70,
+        360,
+        820
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "2 · Modelos + LoRA",
+      "bounding": [
+        400,
+        -70,
+        420,
+        660
+      ],
+      "color": "#8A8",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "3 · Prompt (automático + trigger)",
+      "bounding": [
+        840,
+        -70,
+        460,
+        1090
+      ],
+      "color": "#b58b2a",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "4 · ControlNet: pose e composição do post",
+      "bounding": [
+        1320,
+        -70,
+        360,
+        600
+      ],
+      "color": "#a1309b",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 5,
+      "title": "5 · Condicionamento",
+      "bounding": [
+        1700,
+        -70,
+        380,
+        740
+      ],
+      "color": "#b06634",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 6,
+      "title": "6 · Geração (2 passes)",
+      "bounding": [
+        2100,
+        -70,
+        380,
+        1000
+      ],
+      "color": "#3f9e5a",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 7,
+      "title": "7 · Cara + guardar",
+      "bounding": [
+        2500,
+        -70,
+        1180,
+        970
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.45,
+      "offset": [
+        200,
+        700
+      ]
+    }
+  },
+  "version": 0.4
+}

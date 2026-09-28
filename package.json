@@ -1,0 +1,19 @@
+{
+  "name": "shiva-automation",
+  "version": "0.2.0",
+  "private": true,
+  "description": "SHIVA Automation: local-first content desk. Tracks Instagram & TikTok creators, surfaces their best reels and remakes them step by step with the agency AI models (WaveSpeed).",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "scrape:test": "node --disable-warning=ExperimentalWarning scripts/test-scrape.js",
+    "mock:comfy": "node scripts/mock-comfy.js",
+    "mock:fal": "node scripts/mock-fal.js",
+    "mock:runninghub": "node scripts/mock-runninghub.js"
+  }
+}
